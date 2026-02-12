@@ -2,6 +2,7 @@ const express = require("express");
 const {
   listarLivros,
   buscarLivroPorId,
+  criarLivro,
 } = require("../controllers/booksController");
 
 const router = express.Router();
@@ -10,5 +11,7 @@ const router = express.Router();
 router.get("/livros", listarLivros);
 
 router.get("/livros/:id", buscarLivroPorId);
+
+router.post("/livros", criarLivro)
 
 module.exports = router;
