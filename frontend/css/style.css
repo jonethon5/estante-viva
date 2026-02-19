@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: #333;
+  background-color: #fcfcfc;
+}
+
+/* --- CABEÇALHO (HEADER) --- */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #fff;
+}
+
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-bar {
+  padding: 0.5rem 1rem;
+  width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color: #f9f9f9;
+}
+
+/* --- LAYOUT PRINCIPAL (MEIO DA PÁGINA) --- */
+.container {
+  display: flex;
+  flex: 1; /* Faz o container ocupar o espaço restante da tela */
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* --- MENU LATERAL (SIDEBAR) --- */
+aside.sidebar {
+  width: 250px;
+  padding: 2rem;
+  border-right: 1px solid #eaeaea;
+  background-color: #fff;
+}
+
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.filter-section h4 {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #666;
+}
+
+/* --- CONTEÚDO PRINCIPAL (MAIN) --- */
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Banner de Destaque */
+.hero-banner {
+  background-color: #a09d98;
+  color: white;
+  padding: 3rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.hero-banner h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Área dos Produtos */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
