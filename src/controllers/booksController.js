@@ -34,74 +34,156 @@ const listarLivros = function (req, res) {
   return res.status(200).json(filtrados);
 };
 
-const buscarLivroPorId = function (req, res) {
-  const livros = todosOsLivros();
+const buscarLivroPorId = function (req, res) { // Controller: busca 1 livro pelo id da URL
+  const livros = todosOsLivros(); // Pega o "banco" atual (array de livros) da camada data
 
-  const id = Number(req.params.id);
+  const id = Number(req.params.id); // Converte o id que veio na rota (string) para number
 
-  if (Number.isNaN(id)) {
-    return res.status(400).json({ erro: "ID inválido" });
+  if (Number.isNaN(id)) { // Se a conversão falhou (virou NaN), o id é inválido
+    return res.status(400).json({ erro: "ID inválido" }); // 400 = erro do cliente (id malformado)
   }
 
-  const livroEncontrado = livros.find((item) => item.id === id);
+  const livroEncontrado = livros.find((item) => item.id === id); // Procura o livro com esse id (retorna 1 objeto ou undefined)
 
-  if (!livroEncontrado) {
-    return res.status(404).json({ erro: "Livro não disponível" });
+  if (!livroEncontrado) { // Se não achou nenhum livro com esse id
+    return res.status(404).json({ erro: "Livro não disponível" }); // 404 = recurso não encontrado
   }
-  // 6️⃣ Retorna o resultado final (array filtrado ou não
-  // Sempre retorna um objeto,
-  return res.status(200).json(livroEncontrado);
+
+  return res.status(200).json(livroEncontrado); // 200 = sucesso, devolve o livro encontrado
 };
 
-const criarLivro = function (req, res) {
-  // 1) Pega os dados enviados pelo cliente no body (JSON)
-  const { title, author, price, stock, category, image } = req.body;
+const criarLivro = function (req, res) { // Controller: cria um livro novo (POST)
+  const { title, author, price, stock, category, image } = req.body; // Desestrutura os campos enviados no JSON do body
 
-  // 2) Validação mínima (MVP):
-  //    - Strings obrigatórias: precisam ser string e não vazias (trim remove espaços)
-  if (typeof title !== "string" || title.trim() === "") {
-    return res
-      .status(400)
-      .json({ erro: "title deve ser uma string não vazia" });
+  // Validação mínima do MVP: garantir que os dados básicos existem e têm tipo correto
+  if (typeof title !== "string" || title.trim() === "") { // title precisa ser string e não pode ser vazio/espacos
+    return res.status(400).json({ erro: "title deve ser uma string não vazia" }); // Se inválido, retorna 400
   }
 
-  if (typeof author !== "string" || author.trim() === "") {
-    return res
-      .status(400)
-      .json({ erro: "author deve ser uma string não vazia" });
+  if (typeof author !== "string" || author.trim() === "") { // author precisa ser string e não pode ser vazio
+    return res.status(400).json({ erro: "author deve ser uma string não vazia" }); // 400 se inválido
   }
 
-  if (typeof category !== "string" || category.trim() === "") {
-    return res
-      .status(400)
-      .json({ erro: "category deve ser uma string não vazia" });
+  if (typeof category !== "string" || category.trim() === "") { // category precisa ser string e não pode ser vazio
+    return res.status(400).json({ erro: "category deve ser uma string não vazia" }); // 400 se inválido
   }
 
-  //    - Números obrigatórios: não podem ser null/undefined, devem ser number e não negativos
-  if (stock == null || typeof stock !== "number" || stock < 0) {
-    return res.status(400).json({
-      erro: "stock não pode ser negativo e tem que ser um numero valido",
+  if (stock == null || typeof stock !== "number" || stock < 0) { // stock não pode ser null/undefined, precisa ser number e >= 0
+    return res.status(400).json({ // Responde erro 400
+      erro: "stock não pode ser negativo e tem que ser um numero valido", // Mensagem de validação
     });
   }
 
-  if (price == null || typeof price !== "number" || price < 0) {
-    return res.status(400).json({
-      erro: "preço não pode ser negativo e tem que ser um número válido",
+  if (price == null || typeof price !== "number" || price < 0) { // price não pode ser null/undefined, precisa ser number e >= 0
+    return res.status(400).json({ // Responde erro 400
+      erro: "preço não pode ser negativo e tem que ser um número válido", // Mensagem de validação
     });
   }
 
-  // 3) Cria o livro chamando a camada data (ela gera o id e salva no array)
-  const livroCriado = adicionarLivro({
-    title,
-    author,
-    price,
-    stock,
-    category,
-    image,
+  const livroCriado = adicionarLivro({ // Chama a camada data para criar e salvar o livro (aqui gera o id também)
+    title, // Envia title
+    author, // Envia author
+    price, // Envia price
+    stock, // Envia stock
+    category, // Envia category
+    image, // Envia image
   });
 
-  // 4) Retorna 201 (Created) + o recurso recém-criado
-  return res.status(201).json(livroCriado);
+  // OBS: o mais correto no POST é 201 (Created). Você pode trocar 200 por 201 depois.
+  return res.status(200).json(livroCriado); // Retorna sucesso e devolve o livro criado
 };
+
+const deletarLivro = function (req, res) { // Controller: remove um livro pelo id (DELETE)
+  const id = Number(req.params.id); // Converte id da URL para number
+  if (Number.isNaN(id)) { // Se id for inválido (NaN)
+    return res.status(400).json({ error: "ID inválido. Use um número." }); // 400 = id malformado (OBS: aqui você usou "error", nos outros "erro")
+  }
+
+  const db = todosOsLivros(); // Pega o array de livros atual (mock)
+  const index = db.findIndex((item) => item.id === id); // Procura o índice do livro no array (posição), ou -1 se não existir
+
+  if (index < 0) { // Se não achou o livro (findIndex devolveu -1)
+    return res.status(404).json({ error: "Livro não encontrado." }); // 404 = não existe livro com esse id
+  }
+
+  const [livroDeletado] = db.splice(index, 1); // Remove 1 item na posição index e pega o livro removido
+
+  return res.status(200).json({ deleted: livroDeletado }); // Retorna sucesso e devolve qual livro foi deletado
+};
+
+const atualizarLivro = function (req, res) { // Controller: atualiza parcialmente (PATCH) um livro pelo id
+  const id = Number(req.params.id); // Converte id da URL para number
+  if (Number.isNaN(id)) { // Se id for inválido
+    return res.status(400).json({ erro: "ID tem que ser um numero" }); // 400 = id malformado
+  }
+
+  const livros = todosOsLivros(); // Pega o array atual de livros
+  const livro = livros.find((item) => item.id === id); // Procura o livro pelo id (objeto)
+
+  if (!livro) { // Se não achou livro com esse id
+    return res.status(404).json({ erro: "Esse ID não existe!" }); // 404 = recurso não encontrado
+  }
+
+  const dados = req.body; // Pega os dados enviados (patch parcial)
+  if (!dados || Object.keys(dados).length === 0) { // Se body não existe ou veio vazio {}
+    return res.status(400).json({ erro: "Nenhum dado para atualizar" }); // 400 = o cliente não mandou nada pra mudar
+  }
+
+  const allowed = ["title", "author", "price", "stock", "category", "image"]; // Lista de campos permitidos no PATCH
+  const invalidField = Object.keys(dados).find((k) => !allowed.includes(k)); // Procura alguma chave no body que não é permitida
+  if (invalidField) { // Se encontrou campo não permitido
+    return res.status(400).json({ erro: `Campo inválido: ${invalidField}` }); // 400 = cliente tentou mandar campo proibido
+  }
+
+  if (dados.title !== undefined) { // Se o cliente mandou title (mesmo que vazio, vai cair na validação)
+    if (typeof dados.title !== "string" || dados.title.trim() === "") { // title precisa ser string e não vazio
+      return res.status(400).json({ erro: "title deve ser uma string não vazia" }); // 400 se inválido
+    }
+    livro.title = dados.title.trim(); // Atualiza title no livro (trim pra salvar limpo)
+  }
+
+  if (dados.author !== undefined) { // Se o cliente mandou author
+    if (typeof dados.author !== "string" || dados.author.trim() === "") { // valida author
+      return res.status(400).json({ erro: "author deve ser uma string não vazia" }); // 400 se inválido
+    }
+    livro.author = dados.author.trim(); // Atualiza author
+  }
+
+  if (dados.category !== undefined) { // Se o cliente mandou category
+    if (typeof dados.category !== "string" || dados.category.trim() === "") { // valida category
+      return res.status(400).json({ erro: "category deve ser uma string não vazia" }); // 400 se inválido
+    }
+    livro.category = dados.category.trim(); // Atualiza category
+  }
+
+  if (dados.stock !== undefined) { // Se o cliente mandou stock (pode ser 0)
+    if (typeof dados.stock !== "number" || dados.stock < 0) { // valida stock: number e >= 0
+      return res.status(400).json({ erro: "stock não pode ser negativo e tem que ser um numero valido" }); // 400 se inválido
+    }
+    livro.stock = dados.stock; // Atualiza stock
+  }
+
+  if (dados.price !== undefined) { // Se o cliente mandou price
+    if (typeof dados.price !== "number" || dados.price < 0) { // valida price: number e >= 0
+      return res.status(400).json({ erro: "preço não pode ser negativo e tem que ser um número válido" }); // 400 se inválido
+    }
+    livro.price = dados.price; // Atualiza price
+  }
+
+  if (dados.image !== undefined) { // Se o cliente mandou image (aqui não tem validação)
+    livro.image = dados.image; // Atualiza image do livro
+  }
+
+  return res.status(200).json(livro); // Retorna sucesso e devolve o livro atualizado
+};
+'
+'
 // Exporta o controller para ser usado pela rota
-module.exports = { listarLivros, buscarLivroPorId, criarLivro };
+module.exports = {
+  deletarLivro,
+  listarLivros,
+  buscarLivroPorId,
+  criarLivro,
+  atualizarLivro,
+};
+øøøøøøøø
