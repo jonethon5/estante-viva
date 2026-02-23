@@ -1,95 +1,70 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Arial, sans-serif; background: #0f1115; color: #eaeef7; }
+
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px; border-bottom: 1px solid #23283a; background: #111521;
+}
+.logo { font-weight: 700; letter-spacing: 0.5px; }
+
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 16px; padding: 16px; }
+.sidebar {
+  padding: 16px; border: 1px solid #23283a; border-radius: 12px; background: #111521;
+  height: fit-content;
+}
+.content { padding: 16px; border: 1px solid #23283a; border-radius: 12px; background: #111521; }
+
+.content__top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.status { opacity: 0.85; font-size: 14px; }
+
+.label { display: block; margin-top: 12px; margin-bottom: 6px; opacity: 0.9; }
+.checkbox { display: flex; gap: 8px; align-items: center; margin: 12px 0; opacity: 0.9; }
+
+.input {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #2a3148; background: #0f1115; color: #eaeef7;
+  outline: none;
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  color: #333;
-  background-color: #fcfcfc;
+.btn {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #2a3148; background: #1d2742; color: #eaeef7;
+  cursor: pointer; margin-top: 10px;
+}
+.btn--ghost { background: transparent; }
+
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px; margin-top: 12px;
 }
 
-/* --- CABEÇALHO (HEADER) --- */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eaeaea;
-  background-color: #fff;
+.card {
+  border: 1px solid #23283a; border-radius: 12px; background: #0f1115;
+  padding: 12px; cursor: pointer;
 }
+.card__img {
+  width: 100%; height: 140px; border-radius: 10px; object-fit: cover;
+  border: 1px solid #23283a; background: #111521;
+}
+.card__title { font-weight: 700; margin: 10px 0 6px; }
+.card__meta { opacity: 0.85; font-size: 14px; }
+.card__price { margin-top: 10px; font-weight: 700; }
 
-.header-left,
-.header-center,
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+.add { margin-top: 18px; border-top: 1px solid #23283a; padding-top: 16px; }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form button { grid-column: span 2; }
 
-.search-bar {
-  padding: 0.5rem 1rem;
-  width: 400px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  background-color: #f9f9f9;
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
 }
-
-/* --- LAYOUT PRINCIPAL (MEIO DA PÁGINA) --- */
-.container {
-  display: flex;
-  flex: 1; /* Faz o container ocupar o espaço restante da tela */
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+.modal {
+  width: min(560px, 100%); background: #111521; border: 1px solid #23283a;
+  border-radius: 14px; padding: 16px; position: relative;
 }
-
-/* --- MENU LATERAL (SIDEBAR) --- */
-aside.sidebar {
-  width: 250px;
-  padding: 2rem;
-  border-right: 1px solid #eaeaea;
-  background-color: #fff;
+.modal__close {
+  position: absolute; top: 10px; right: 10px;
+  background: transparent; border: 0; color: #eaeef7; cursor: pointer;
+  font-size: 18px;
 }
-
-.filter-section {
-  margin-bottom: 2rem;
-}
-
-.filter-section h4 {
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  color: #666;
-}
-
-/* --- CONTEÚDO PRINCIPAL (MAIN) --- */
-main {
-  flex: 1;
-  padding: 2rem;
-}
-
-/* Banner de Destaque */
-.hero-banner {
-  background-color: #a09d98;
-  color: white;
-  padding: 3rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-}
-
-.hero-banner h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-/* Área dos Produtos */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.5rem;
-}
+.hidden { display: none; }

@@ -1,54 +1,88 @@
-// Aguarda o HTML carregar completamente antes de rodar o script
-document.addEventListener("DOMContentLoaded", () => {
-  // Seleciona a div onde os livros vão aparecer
-  const productsGrid = document.querySelector(".products-grid");
+// ==========================
+// DOM (Elementos da página)
+// ==========================
 
-  // Função assíncrona para buscar (GET) os dados no seu Node.js
-  async function loadBooks() {
-    try {
-      // ⚠️ ATENÇÃO: Substitua essa URL pela rota GET do seu backend Node!
-      // Exemplo: se seu servidor roda na porta 3000, seria algo assim:
-      const response = await fetch("http://localhost:3000/api/livros");
+// Pega o elemento <div id="status"> para mostrar mensagens na tela
+// Ex: "Carregando livros...", "4 livros encontrados", "Erro ao carregar..."
+const statusEl = document.querySelector("#status");
 
-      // Verifica se a resposta do servidor deu certo (Status 200)
-      if (!response.ok) {
-        throw new Error("Erro ao buscar os livros da API");
-      }
+// Pega o elemento <div id="booksGrid"> onde os cards dos livros serão renderizados depois
+const booksGridEl = document.querySelector("#booksGrid");
 
-      // Converte a resposta em um array de objetos JavaScript
-      const books = await response.json();
 
-      // Limpa o HTML estático que estava lá como esqueleto
-      productsGrid.innerHTML = "";
+// ==========================
+// URLs da API
+// ==========================
 
-      // Verifica se o banco está vazio
-      if (books.length === 0) {
-        productsGrid.innerHTML = "<p>Nenhum livro encontrado no momento.</p>";
-        return;
-      }
+// Base URL do backend (prefixo definido no server.js com app.use("/api/books", ...))
+const API_URL = "http://localhost:3000/api/books";
 
-      // Percorre cada livro recebido do banco de dados
-      books.forEach((book) => {
-        // Monta o HTML do card dinamicamente usando Template Literals (crases)
-        // Adapte book.titulo, book.autor e book.preco para os nomes exatos das colunas no seu banco!
-        const cardHTML = `
-                    <div class="product-card">
-                        <h4>${book.titulo}</h4>
-                        <p>${book.autor}</p>
-                        <strong>R$ ${book.preco}</strong>
-                    </div>
-                `;
+// URL final para buscar os livros (GET /api/books/livros)
+const BOOKS_URL = API_URL + "/livros";
 
-        // Injeta o novo card dentro da grid de produtos
-        productsGrid.innerHTML += cardHTML;
-      });
-    } catch (error) {
-      console.error("Erro de conexão:", error);
-      productsGrid.innerHTML =
-        "<p>Erro ao carregar os livros. Verifique se o servidor Node está rodando.</p>";
-    }
+
+// ==========================
+// Função para buscar livros (GET)
+// ==========================
+
+// Função assíncrona: usa await para esperar a resposta do backend
+async function fetchBooks() {
+  // Faz uma requisição GET para a rota de livros
+  const response = await fetch(BOOKS_URL);
+
+  // response.ok é true quando o status HTTP é 2xx (ex: 200, 201, etc.)
+  // Se for false (ex: 404, 500), lançamos um erro para ser tratado no catch da init()
+  if (!response.ok) {
+    // ⚠️ Observação: aqui existe um erro no seu código original:
+    // response.status NÃO é uma função, então response.status(404) vai quebrar.
+    // O correto seria usar response.status (número) ou response.statusText (texto).
+    throw new Error("Failed to fetch books: " + response.status(404));
   }
 
-  // Chama a função logo que a página abre
-  loadBooks();
-});
+  // Converte o corpo da resposta em JSON (no seu caso, um array de livros)
+  const books = await response.json();
+
+  // Retorna o array de livros para quem chamou a função
+  return books;
+}
+
+
+// ==========================
+// Função init (inicializa o app)
+// ==========================
+
+// Essa função roda quando a página carrega e controla o fluxo inicial:
+// 1) Mostrar "Carregando..."
+// 2) Buscar os livros na API
+// 3) Mostrar quantos livros vieram
+// 4) Se der erro, mostrar mensagem de erro
+async function init() {
+  // Mostra feedback imediato para o usuário
+  statusEl.textContent = "Carregando livros...";
+
+  try {
+    // Busca os livros (pode dar erro e cair no catch se fetchBooks lançar erro)
+    const books = await fetchBooks();
+
+    // Loga no console para confirmar que os dados chegaram
+    console.log(books);
+
+    // Atualiza o status com a quantidade de livros carregados
+    statusEl.textContent = `${books.length} livros encontrados.`;
+  } catch (error) {
+    // Se der erro (rede, backend off, CORS, response.ok false com throw, etc.)
+    statusEl.textContent = "Erro ao carregar livros: ";
+
+    // Mostra o erro detalhado no console para debug
+    console.error(error);
+  }
+}
+
+
+// ==========================
+// Start (executa o app)
+// ==========================
+
+// Chama a init para iniciar tudo quando o script rodar
+// (Como seu <script> está com defer, isso roda após o HTML carregar)
+init();
