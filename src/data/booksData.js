@@ -46,7 +46,6 @@ const todosOsLivros = function () {
 // 2) Recebe os dados do livro (title, author, price...)
 // e devolve o livro criado com ID gerado pelo backend.
 const adicionarLivro = function (dados) {
-
   // 2.1) Caso especial: se o array estiver vazio,
   // o primeiro ID começa em 1 (evita Math.max em array vazio).
   if (books.length === 0) {

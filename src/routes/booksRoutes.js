@@ -3,21 +3,26 @@ const {
   listarLivros,
   buscarLivroPorId,
   criarLivro,
- deletarLivro,
- atualizarLivro 
+  deletarLivro,
+  atualizarLivro,
+  validateIdParam,
 } = require("../controllers/booksController");
 
+const logger = require("../middlewares/logger.js");
+
 const router = express.Router();
+
+router.use(logger)
 
 //Cria o router. Ele vai agrupar todas as rotas de livros.
 router.get("/livros", listarLivros);
 
-router.get("/livros/:id", buscarLivroPorId);
+router.get("/livros/:id", validateIdParam, buscarLivroPorId);
 
 router.post("/livros", criarLivro);
 
-router.delete("/livros/:id", deletarLivro);
+router.delete("/livros/:id", validateIdParam, deletarLivro);
 
-router.patch("/livros/:id", atualizarLivro);
+router.patch("/livros/:id", validateIdParam, atualizarLivro);
 
 module.exports = router;
