@@ -1,9 +1,12 @@
-const express = require("express");
-const cors = require('cors')
+import express from "express";
+import cors from "cors";
 
 // Importa o arquivo de rotas de livros (Router) que você criou dentro de src/routes
 // Observação: './' significa "a partir da pasta atual" (raiz do projeto, onde está o server.js)
-const booksRoutes = require("./src/routes/booksRoutes");
+import booksRoutes from "./src/routes/booksRoutes.js";
+
+import "./src/db.js";
+
 
 const app = express();
 app.use(cors())

@@ -11,5 +11,4 @@ function logger(req, res, next) {
   return next();
 }
 
-
-module.exports = logger
+export default logger;

@@ -1,28 +1,30 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   listarLivros,
   buscarLivroPorId,
   criarLivro,
   deletarLivro,
   atualizarLivro,
   validateIdParam,
-} = require("../controllers/booksController");
+} from "../controllers/booksController.js";
 
-const logger = require("../middlewares/logger.js");
+
+import logger from "../middlewares/logger.js";
+import requireApiKey from "../middlewares/requireApiKey.js";
 
 const router = express.Router();
 
-router.use(logger)
+router.use(logger);
 
 //Cria o router. Ele vai agrupar todas as rotas de livros.
 router.get("/livros", listarLivros);
 
 router.get("/livros/:id", validateIdParam, buscarLivroPorId);
 
-router.post("/livros", criarLivro);
+router.post("/livros", requireApiKey, criarLivro);
 
-router.delete("/livros/:id", validateIdParam, deletarLivro);
+router.delete("/livros/:id", requireApiKey, validateIdParam, deletarLivro);
 
-router.patch("/livros/:id", validateIdParam, atualizarLivro);
+router.patch("/livros/:id", requireApiKey, validateIdParam, atualizarLivro);
 
-module.exports = router;
+export default router;
