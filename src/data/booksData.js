@@ -31,10 +31,10 @@ async function adicionarLivro(dados) {
   return rows[0];
 }
 
-async function deletarLivro(dados) {
-  const livro = await connection.execute("DELETE livros WHRE id = ?");
-
-  
+async function deletarLivro(id) {
+  const [livro] = await connection.execute(
+    `SELECT * FROM livros WHERE id = ?`.id,
+  );
 }
 
 // 3) Exporta as funções (data layer).
