@@ -2,6 +2,8 @@ import {
   todosOsLivros,
   adicionarLivro,
   deletarLivroData,
+  buscarLivroPorIdData,
+  atualizarLivroData,
 } from "../data/booksData.js";
 
 // Mock do banco de dados (array em memória).
@@ -13,10 +15,7 @@ async function listarLivros() {
 
 // Busca um livro por ID. Se não encontrar, lança erro (tratado no controller).
 async function buscarLivroPorId(id) {
-  const livros = await todosOsLivros();
-
-  const livroEncontrado = livros.find((item) => item.id === id);
-
+  const livroEncontrado = await buscarLivroPorIdData(id);
   if (livroEncontrado) {
     return livroEncontrado;
   }
@@ -61,24 +60,18 @@ async function criarLivro(livro) {
 // Deleta um livro. Recebe o livro a ser deletado (encontrado pelo controller).
 async function deletarLivro(id) {
   const livros = await todosOsLivros(); // Pega o "banco" atual (array em memória)
-
   const index = livros.findIndex((item) => item.id === id); // Encontra o índice do livro com o ID dado
-
   if (index < 0) {
     throw new Error("Esse livro não existe");
   }
-
-  const livroDeletado = deletarLivroData(id);
-
+  const livroDeletado = atualizarLivroData(id);
   return livroDeletado;
 }
 
 // Atualiza um livro. Recebe o id do livro a ser atualizado e os dados para atualizar (title, author, price...)
 async function atualizarLivro(id, dados) {
   // 1. buscar o livro pelo id
-  const livros = await todosOsLivros();
-  const livro = livros.find((item) => item.id === id);
-
+  const livro = await buscarLivroPorIdData(id);
   // 2. se não encontrar, lançar erro
   if (!livro) {
     throw new Error("livro não Encontrado");
@@ -87,64 +80,7 @@ async function atualizarLivro(id, dados) {
   if (!dados || Object.keys(dados).length === 0) {
     throw new Error("Nenhum dado para atualizar");
   }
-  const allowed = ["title", "author", "price", "stock", "category", "image"];
-  const invalidField = Object.keys(dados).find((k) => !allowed.includes(k)); // Procura alguma chave no body que não é permitida
-
-  if (invalidField) {
-    throw new Error("Campo inválido");
-  }
-  if (dados.title !== undefined) {
-    // Se o cliente mandou title (mesmo que vazio, vai cair na validação)
-    if (typeof dados.title !== "string" || dados.title.trim() === "") {
-      // title precisa ser string e não vazio
-      throw new Error("title deve ser uma string não vazia");
-    }
-    livro.title = dados.title.trim(); // Atualiza title no livro (trim pra salvar limpo)
-  }
-
-  if (dados.author !== undefined) {
-    // Se o cliente mandou author
-    if (typeof dados.author !== "string" || dados.author.trim() === "") {
-      // valida author
-      throw new Error("author deve ser uma string não vazia");
-    }
-    livro.author = dados.author.trim(); // Atualiza author
-  }
-
-  if (dados.category !== undefined) {
-    // Se o cliente mandou category
-    if (typeof dados.category !== "string" || dados.category.trim() === "") {
-      // valida category
-      throw new Error("category deve ser uma string não vazia");
-    }
-    livro.category = dados.category.trim(); // Atualiza category
-  }
-
-  if (dados.stock !== undefined) {
-    // Se o cliente mandou stock (pode ser 0)
-    if (typeof dados.stock !== "number" || dados.stock < 0) {
-      // valida stock: number e >= 0
-      throw new Error(
-        "stock não pode ser negativo e tem que ser um numero valido",
-      );
-    }
-    livro.stock = dados.stock; // Atualiza stock
-  }
-  if (dados.price !== undefined) {
-    // Se o cliente mandou price
-    if (typeof dados.price !== "number" || dados.price < 0) {
-      // valida price: number e >= 0
-      throw new Error(
-        "price não pode ser negativo e tem que ser um numero valido",
-      );
-    }
-    livro.price = dados.price; // Atualiza price
-  }
-  // se image veio, atualizar direto
-  if (dados.image !== undefined) {
-    livro.image = dados.image; // Atualiza image (pode ser string vazia, não tem validação)
-  }
-  return livro; // Retorna o livro atualizado (útil pro controller responder 200 com o recurso atualizado)
+  return await atualizarLivroData(id, dados); // Retorna o livro atualizado (útil pro controller responder 200 com o recurso atualizado)
 }
 
 export {
