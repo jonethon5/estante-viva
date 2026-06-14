@@ -1,4 +1,8 @@
-import { todosOsLivros,adicionarLivro } from "../data/booksData.js";
+import {
+  todosOsLivros,
+  adicionarLivro,
+  deletarLivroData,
+} from "../data/booksData.js";
 
 // Mock do banco de dados (array em memória).
 // Cada livro tem id, title, author, price, stock, category e image.
@@ -58,13 +62,13 @@ async function criarLivro(livro) {
 async function deletarLivro(id) {
   const livros = await todosOsLivros(); // Pega o "banco" atual (array em memória)
 
-  const index =  livros.findIndex((item) => item.id === id); // Encontra o índice do livro com o ID dado
+  const index = livros.findIndex((item) => item.id === id); // Encontra o índice do livro com o ID dado
 
   if (index < 0) {
     throw new Error("Esse livro não existe");
   }
 
-  const [livroDeletado] = livros.splice(index, 1); // Remove 1 item na posição index e pega o livro removido
+  const livroDeletado = deletarLivroData(id);
 
   return livroDeletado;
 }

@@ -31,12 +31,17 @@ async function adicionarLivro(dados) {
   return rows[0];
 }
 
-async function deletarLivro(id) {
+async function deletarLivroData(id) {
   const [livro] = await connection.execute(
-    `SELECT * FROM livros WHERE id = ?`.id,
+    "SELECT * FROM livros WHERE id = ?",
+    [id],
   );
+
+  await connection.execute("DELETE FROM livros WHERE id = ?", [id]);
+
+  return livro[0];
 }
 
 // 3) Exporta as funções (data layer).
 // Depois, no MySQL, você mantém esses nomes e troca a implementação.
-export { todosOsLivros, adicionarLivro };
+export { todosOsLivros, adicionarLivro, deletarLivroData };
