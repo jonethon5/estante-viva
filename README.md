@@ -26,27 +26,32 @@ A visão do projeto é ser uma **rede social para leitores**: um lugar onde é p
 ## 🛠️ Tecnologias
 
 ### Backend
+
 - **Node.js** — ambiente de execução
 - **Express** — framework web
 - **MySQL** — banco de dados relacional
 - **mysql2** — driver de conexão com o banco
 - **dotenv** — gerenciamento de variáveis de ambiente
-- **JWT + bcrypt** *(em breve)* — autenticação e segurança
+- **JWT + bcrypt** _(em breve)_ — autenticação e segurança
 
 ### Frontend
+
 - **HTML5 + CSS3 + JavaScript puro** — sem frameworks, para consolidar os fundamentos
 
 ### Arquitetura
+
 ```
 routes → controllers → services → data (MySQL)
 ```
+
 Separação clara de responsabilidades em camadas: rotas, controllers, regras de negócio (services) e acesso ao banco (data).
 
----
+## Fluxo Git: GitHub Flow com Conventional Commits
 
 ## ⚙️ Como rodar localmente
 
 ### Pré-requisitos
+
 - Node.js instalado
 - MySQL instalado e rodando
 
@@ -66,6 +71,7 @@ npm install
 ```
 
 Crie um arquivo `.env` com:
+
 ```env
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -107,27 +113,29 @@ O servidor estará rodando em `http://localhost:3000`.
 
 Base URL: `http://localhost:3000/api/books`
 
-| Método | Rota | Descrição | Autenticação |
-|--------|------|-----------|--------------|
-| GET | `/livros` | Lista todos os livros | Não |
-| GET | `/livros/:id` | Busca livro por ID | Não |
-| POST | `/livros` | Cria um novo livro | Sim (x-api-key) |
-| PATCH | `/livros/:id` | Atualiza livro parcialmente | Sim (x-api-key) |
-| DELETE | `/livros/:id` | Remove um livro | Sim (x-api-key) |
+| Método | Rota          | Descrição                   | Autenticação    |
+| ------ | ------------- | --------------------------- | --------------- |
+| GET    | `/livros`     | Lista todos os livros       | Não             |
+| GET    | `/livros/:id` | Busca livro por ID          | Não             |
+| POST   | `/livros`     | Cria um novo livro          | Sim (x-api-key) |
+| PATCH  | `/livros/:id` | Atualiza livro parcialmente | Sim (x-api-key) |
+| DELETE | `/livros/:id` | Remove um livro             | Sim (x-api-key) |
 
 ### Filtros disponíveis (GET /livros)
+
 ```
 ?category=Fantasia        → filtra por categoria
 ?stock=true               → apenas livros em estoque
 ```
 
 ### Exemplo de body (POST/PATCH)
+
 ```json
 {
   "title": "Sapiens",
   "author": "Yuval Noah Harari",
   "category": "História",
-  "price": 49.90,
+  "price": 49.9,
   "stock": 10,
   "image": "https://url-da-imagem.jpg"
 }
@@ -170,6 +178,7 @@ estante-viva/
 - [x] CRUD de livros com mock (array em memória)
 - [x] Arquitetura em camadas (routes/controllers/services/data)
 - [x] Migração para MySQL
+- [x] Fluxo Git com GitHub Flow e Conventional Commits
 - [ ] Busca e filtros avançados
 - [ ] Autenticação com JWT
 - [ ] Frontend integrado com a API
@@ -185,4 +194,4 @@ estante-viva/
 
 Desenvolvido por **Jonathan** como projeto de portfólio pessoal.
 
-> *"Aprendo melhor na prática — esse projeto é prova disso."*
+> _"Aprendo melhor na prática — esse projeto é prova disso."_
