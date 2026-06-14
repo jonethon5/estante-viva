@@ -8,6 +8,16 @@ async function todosOsLivros() {
   return rows;
 }
 
+// 2) Busca um livro por ID. Se não encontrar, devolve null (tratado no service).
+async function buscarLivroPorIdData(id) {
+  const [livro] = await connection.execute(
+    "SELECT * FROM livros WHERE id = ? ",
+    [id],
+  );
+  return livro[0];
+}
+
+// 3) Adiciona um livro novo. Recebe os dados do livro (title, author, price...)
 async function adicionarLivro(dados) {
   console.log("adicionarLivro chamado com:", dados);
   const [livro] = await connection.execute(
@@ -21,7 +31,6 @@ async function adicionarLivro(dados) {
       dados.image,
     ],
   );
-
   const id = livro.insertId;
 
   const [rows] = await connection.execute("SELECT * FROM livros WHERE id = ?", [
@@ -31,17 +40,45 @@ async function adicionarLivro(dados) {
   return rows[0];
 }
 
+// 4) Deleta um livro por ID. Se não encontrar, lança erro (tratado no service).
 async function deletarLivroData(id) {
   const [livro] = await connection.execute(
     "SELECT * FROM livros WHERE id = ?",
     [id],
   );
-
   await connection.execute("DELETE FROM livros WHERE id = ?", [id]);
-
   return livro[0];
 }
 
-// 3) Exporta as funções (data layer).
-// Depois, no MySQL, você mantém esses nomes e troca a implementação.
-export { todosOsLivros, adicionarLivro, deletarLivroData };
+// 5) Atualiza um livro por ID. Recebe o id do livro a ser atualizado e os dados novos. Se não encontrar, lança erro (tratado no service).
+async function atualizarLivroData(id, dados) {
+  const [rows] = await connection.execute("SELECT * FROM livros WHERE id = ?", [
+    id,
+  ]);
+  const livroAtual = rows[0];
+  const livroAtualizado = { ...livroAtual, ...dados };
+  await connection.execute(
+    "UPDATE livros  SET title = ?, author = ?,  price = ?, stock = ?, category =  ?, image = ? WHERE id = ?",
+    [
+      
+      livroAtualizado.title,
+      livroAtualizado.author,
+      livroAtualizado.price,
+      livroAtualizado.stock,
+      livroAtualizado.category,
+      livroAtualizado.image,
+      id
+    ],
+  );
+
+  return livroAtualizado;
+}
+
+// Exporta as funções para serem usadas em outros arquivos (services, controllers).
+export {
+  todosOsLivros,
+  adicionarLivro,
+  deletarLivroData,
+  buscarLivroPorIdData,
+  atualizarLivroData,
+};
