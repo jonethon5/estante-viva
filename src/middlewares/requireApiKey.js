@@ -1,3 +1,4 @@
+// Middleware para exigir a chave de API
 function requireApiKey(req, res, next) {
   const apiKey = req.header("x-api-key");
 

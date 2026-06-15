@@ -1,3 +1,4 @@
+// Middleware de logger para registrar as requisições e respostas
 function logger(req, res, next) {
   const start = Date.now();
 

@@ -1,30 +1,27 @@
+// 1. imports todos no topo
 import express from "express";
 import cors from "cors";
-
-// Importa o arquivo de rotas de livros (Router) que você criou dentro de src/routes
-// Observação: './' significa "a partir da pasta atual" (raiz do projeto, onde está o server.js)
+import { fileURLToPath } from "url";
+import path from "path";
 import booksRoutes from "./src/routes/booksRoutes.js";
-
 import "./src/db.js";
 
-
+// 2. cria o app
 const app = express();
-app.use(cors())
 
-const PORT = 3000;
+// 3. __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Middleware que permite o servidor entender JSON no corpo da requisição.
-// Sem isso, req.body viria undefined em POST/PUT.
+// 4. middlewares
+app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "frontend")));
 
-// Registra (conecta) as rotas de livros no servidor com um prefixo/base path
-// Tudo que começar com '/api/books' será encaminhado para o Router 'booksRoutes'
-// Exemplo: se o router tiver '/livros', a URL final vira '/api/books/livros'
+// 5. rotas
 app.use("/api/books", booksRoutes);
 
-
-
-// Serve apenas como feedback no terminal.
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+// 6. listen
+app.listen(3000, () => {
+  console.log("🚀 Servidor rodando em http://localhost:3000");
 });
