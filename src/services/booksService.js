@@ -64,7 +64,7 @@ async function deletarLivro(id) {
   if (index < 0) {
     throw new Error("Esse livro não existe");
   }
-  const livroDeletado = atualizarLivroData(id);
+  const livroDeletado = deletarLivroData(id);
   return livroDeletado;
 }
 

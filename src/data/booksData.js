@@ -42,6 +42,7 @@ async function adicionarLivro(dados) {
 
 // 4) Deleta um livro por ID. Se não encontrar, lança erro (tratado no service).
 async function deletarLivroData(id) {
+  console.log("deletarLivroData chamado com id:", id, typeof id);
   const [livro] = await connection.execute(
     "SELECT * FROM livros WHERE id = ?",
     [id],
@@ -60,14 +61,13 @@ async function atualizarLivroData(id, dados) {
   await connection.execute(
     "UPDATE livros  SET title = ?, author = ?,  price = ?, stock = ?, category =  ?, image = ? WHERE id = ?",
     [
-      
       livroAtualizado.title,
       livroAtualizado.author,
       livroAtualizado.price,
       livroAtualizado.stock,
       livroAtualizado.category,
       livroAtualizado.image,
-      id
+      id,
     ],
   );
 

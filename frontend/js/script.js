@@ -79,13 +79,6 @@ const renderBooks = function (books) {
 // ==========================
 // init — inicializa o app
 // ==========================
-
-// Controla o fluxo inicial:
-// 1) Mostra "Carregando..."
-// 2) Busca os livros na API
-// 3) Renderiza os cards
-// 4) Atualiza o status com a quantidade
-// 5) Se der erro, mostra mensagem no status
 async function init() {
   // Feedback imediato para o usuário enquanto a requisição acontece
   statusEl.textContent = "Carregando livros...";
@@ -112,11 +105,35 @@ async function init() {
 }
 // ← init fecha AQUI, fora e depois de renderBooks
 
-function handleGridClick (event) {
+async function handleGridClick(event) {
+  if (event.target.dataset.action === "delete") {
+    const cardEl = event.target.closest(".card");
+    const bookId = cardEl.dataset.id;
+    console.log("Deletar livro com id:", bookId);
+    try {
+      const respose = await fetch(
+        `http://localhost:3000/api/books/livros/${bookId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "x-api-key": "123",
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-  
+      if (!respose.ok) {
+        throw new Error("Failed to delete book: " + respose.status);
+      }
+      console.log("Livro deletado com sucesso");
+      init();
+    } catch (error) {
+      console.error("Failed to delete resource:", error);
+    }
+  }
 }
 
 // Chama o init para iniciar tudo quando o script rodar
 // (o <script defer> garante que o HTML já foi carregado antes disso)
 init();
+booksGridEl.addEventListener("click", handleGridClick);
